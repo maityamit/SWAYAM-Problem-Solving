@@ -45,18 +45,31 @@ class DisjointSet{
 			}else{
 				parent[ulp_v] = ulp_u;
 				size[ulp_u] += size[ulp_v];
-			}	
+			}
+			
 		}
+		
 };
 class Solution {
 public:
-    vector<int> findRedundantConnection(vector<vector<int>>& edges) {
-        int n = edges.size();
-        DisjointSet ds(n+1);
-        for(auto it:edges){
-            if(ds.findUltimateParent(it[0])==ds.findUltimateParent(it[1])) return it;
-            ds.unionByRank(it[0],it[1]);
+    int minCostConnectPoints(vector<vector<int>>& points) {
+        vector<pair<int,pair<int,int>>> edges;
+        for(int i=0;i<points.size();i++){
+            for(int j=0;j<points.size();j++){
+                if(i==j) continue;
+                int dist = abs(points[i][0]-points[j][0])+abs(points[i][1]-points[j][1]);
+                edges.push_back({dist,{i,j}});
+            }
         }
-        return {};
+        sort(edges.begin(),edges.end());
+        int sum = 0;
+        DisjointSet ds(points.size()+1);
+        for(auto it:edges){
+            if(ds.findUltimateParent(it.second.first)!=ds.findUltimateParent(it.second.second)){
+                sum+=it.first;
+                ds.unionByRank(it.second.first,it.second.second);
+            }
+        }
+        return sum;
     }
 };
